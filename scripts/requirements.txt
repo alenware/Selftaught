@@ -1,0 +1,6 @@
+weasyprint>=62
+markdown>=3.5
+beautifulsoup4>=4.12
+pygments>=2.17
+pyyaml>=6
+pymupdf>=1.24

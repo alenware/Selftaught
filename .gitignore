@@ -1,0 +1,5 @@
+assets/fonts/*
+!assets/fonts/.gitkeep
+__pycache__/
+*.pyc
+.venv/

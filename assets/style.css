@@ -1,0 +1,381 @@
+/* Study-guide PDF stylesheet (WeasyPrint, A4).
+   Design notes live in references/pdf-style.md. Nothing in this file is tied
+   to a specific guide: titles, header text and metrics come from build_pdf.py. */
+
+/* ===================== Fonts (bundled in assets/fonts/) ===================== */
+@font-face { font-family: "Pagella"; src: url("fonts/texgyrepagella-regular.otf"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Pagella"; src: url("fonts/texgyrepagella-italic.otf"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Pagella"; src: url("fonts/texgyrepagella-bold.otf"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "Pagella"; src: url("fonts/texgyrepagella-bolditalic.otf"); font-weight: 700; font-style: italic; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-Light.ttf"); font-weight: 300; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-Regular.ttf"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-Italic.ttf"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-Medium.ttf"); font-weight: 500; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-SemiBold.ttf"); font-weight: 600; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-Bold.ttf"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-ExtraBold.ttf"); font-weight: 800; font-style: normal; }
+@font-face { font-family: "DejaVu Sans Mono"; src: url("fonts/DejaVuSansMono.ttf"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "DejaVu Sans Mono"; src: url("fonts/DejaVuSansMono-Oblique.ttf"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "DejaVu Sans Mono"; src: url("fonts/DejaVuSansMono-Bold.ttf"); font-weight: 700; font-style: normal; }
+@font-face { font-family: "DejaVu Sans Mono"; src: url("fonts/DejaVuSansMono-BoldOblique.ttf"); font-weight: 700; font-style: italic; }
+/* Symbol fallback (arrows, check marks, math) for glyphs the text fonts lack */
+@font-face { font-family: "Symbols"; src: url("fonts/DejaVuSans.ttf"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Symbols"; src: url("fonts/DejaVuSans-Bold.ttf"); font-weight: 700; font-style: normal; }
+
+:root {
+  --navy: #101a3f;
+  --indigo: #2f3f9e;
+  --indigo-2: #4b5bd1;
+  --accent: #f5a524;
+  --ink: #1d2233;
+  --muted: #5d6478;
+  --rule: #d9ddea;
+  --code-bg: #f6f7fb;
+  --green: #1f8a4c;
+  --green-bg: #eef8f1;
+  --amber: #b26a00;
+  --amber-bg: #fff7e8;
+  --blue: #1f63b8;
+  --blue-bg: #eef4fc;
+}
+
+/* ===================== Pages ===================== */
+@page {
+  size: A4;
+  margin: 22mm 18mm 20mm 18mm;
+  @top-left {
+    content: string(doctitle);
+    font-family: "Inter", "Symbols", sans-serif; font-size: 7pt; color: #8a90a6;
+    letter-spacing: 0.02em;
+    vertical-align: bottom; padding-bottom: 3mm;
+    border-bottom: 0.5pt solid var(--rule);
+    width: 38%;
+  }
+  @top-right {
+    content: string(chapter);
+    font-family: "Inter", "Symbols", sans-serif; font-size: 7.5pt; color: var(--indigo);
+    font-weight: 500;
+    vertical-align: bottom; padding-bottom: 3mm;
+    border-bottom: 0.5pt solid var(--rule);
+    text-align: right;
+    width: 62%;
+  }
+  @bottom-center {
+    content: counter(page);
+    font-family: "Inter", "Symbols", sans-serif; font-size: 8pt; color: var(--muted);
+    font-weight: 600;
+  }
+}
+@page cover {
+  margin: 0;
+  @top-left { content: none; border: none; }
+  @top-right { content: none; border: none; }
+  @bottom-center { content: none; }
+}
+@page :nth(1 of chapter) {
+  @top-left { content: none; border: none; }
+  @top-right { content: none; border: none; }
+}
+
+html { font-family: "Pagella", "Symbols", serif; font-size: 10.5pt; color: var(--ink); }
+body { margin: 0; line-height: 1.45; hyphens: auto; }
+p { margin: 0 0 0.62em; text-align: justify; orphans: 3; widows: 3; }
+strong { font-weight: 700; color: #11163a; }
+a { color: var(--indigo); text-decoration: none; }
+a.ext { color: var(--indigo); border-bottom: 0.4pt dotted #9aa3d6; }
+
+/* ===================== Cover ===================== */
+.cover {
+  page: cover;
+  height: 297mm; width: 210mm;
+  position: relative;
+  background: linear-gradient(180deg, #0b1233, #27378f);
+  color: #fff;
+  break-after: page;
+  overflow: hidden;
+  string-set: doctitle attr(data-short-title);
+}
+.cover-band {
+  position: absolute; top: 0; left: 0; width: 210mm; height: 7mm;
+  background: linear-gradient(90deg, var(--accent) 0%, #f58f24 40%, #4b5bd1 100%);
+}
+.cover-inner { position: absolute; top: 22mm; left: 20mm; right: 20mm; bottom: 20mm; }
+.cover-top { font-family: "Inter", "Symbols", sans-serif; }
+.cover-chip {
+  display: inline-block; font-size: 7.5pt; letter-spacing: 0.18em; font-weight: 700;
+  padding: 1.6mm 3.2mm; border-radius: 10pt; background: var(--accent); color: #1a1300;
+  margin-right: 2mm;
+}
+.cover-chip.ghost { background: transparent; border: 0.8pt solid rgba(255,255,255,0.45); color: #dfe4ff; font-weight: 500; letter-spacing: 0.06em; }
+.cover-art { display: block; width: 170mm; height: 110mm; margin: 12mm 0 6mm 0; }
+.cover-kicker {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 300; font-size: 20pt; color: #c9d1ff;
+  letter-spacing: 0.01em; margin-bottom: 2mm;
+}
+.cover-title {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 800; font-size: 33pt; line-height: 1.08;
+  margin: 0; color: #ffffff; letter-spacing: -0.015em;
+}
+.cover-accent { width: 32mm; height: 2.2mm; background: var(--accent); margin: 8mm 0 6mm; border-radius: 1mm; }
+.cover-subtitle {
+  font-family: "Pagella", "Symbols", serif; font-style: italic; font-size: 13.5pt; line-height: 1.4;
+  color: #e3e7ff; text-align: left; max-width: 160mm; margin: 0;
+}
+.cover-stats {
+  display: flex; margin-top: 12mm; font-family: "Inter", "Symbols", sans-serif;
+  border-top: 0.6pt solid rgba(255,255,255,0.25); padding-top: 5mm;
+}
+.cover-stats div { flex: 1; }
+.cover-stats b { display: block; font-size: 17pt; font-weight: 700; color: #fff; }
+.cover-stats span { display: block; font-size: 7.5pt; color: #b7c0f0; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1mm; }
+.cover-date {
+  position: absolute; bottom: 4mm; left: 0;
+  font-family: "Inter", "Symbols", sans-serif; font-size: 11pt; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+}
+/* long titles / subtitles: build_pdf.py picks one of these so nothing collides */
+.cover-mid .cover-art { height: 88mm; margin-top: 8mm; }
+.cover-mid .cover-title { font-size: 29pt; }
+.cover-tight .cover-art { height: 66mm; margin-top: 6mm; }
+.cover-tight .cover-title { font-size: 25pt; }
+.cover-tight .cover-kicker { font-size: 17pt; }
+.cover-tight .cover-subtitle { font-size: 12pt; }
+.cover-tight .cover-stats { margin-top: 8mm; }
+.cover-bottom-band { position: absolute; bottom: 0; left: 0; width: 210mm; height: 4mm; display: flex; }
+.cover-bottom-band span { flex: 1; }
+.cover-bottom-band span:nth-child(1) { background: #4b5bd1; }
+.cover-bottom-band span:nth-child(2) { background: #6f7fe8; }
+.cover-bottom-band span:nth-child(3) { background: var(--accent); }
+
+/* ===================== TOC ===================== */
+.toc-page { break-after: page; }
+.toc-kicker, .chapter-label {
+  font-family: "Inter", "Symbols", sans-serif; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.22em;
+  color: var(--accent); margin-top: 6mm;
+}
+.toc-title {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 800; font-size: 26pt; color: var(--navy);
+  margin: 1.5mm 0 3mm; string-set: chapter attr(data-running);
+}
+ul.toc { list-style: none; margin: 4mm 0 0; padding: 0; font-family: "Inter", "Symbols", sans-serif; }
+ul.toc li a { color: var(--ink); display: block; }
+ul.toc li a::after {
+  content: leader('.') target-counter(attr(href), page);
+  color: #9aa0b5;
+}
+ul.toc li.toc-ch {
+  font-size: 9.6pt; font-weight: 700; color: var(--navy);
+  margin-top: 3.4mm; padding-left: 9mm; text-indent: -9mm;
+  break-after: avoid;
+}
+ul.toc li.toc-ch a { color: var(--navy); }
+ul.toc li.toc-ch a::after { color: var(--indigo); font-weight: 700; }
+.toc-num {
+  display: inline-block; width: 9mm; text-indent: 0; color: var(--accent); font-weight: 800;
+}
+ul.toc li.toc-sub {
+  font-size: 8.3pt; font-weight: 400; color: #3c4256; padding-left: 9mm; margin-top: 0.7mm;
+}
+ul.toc.dense { margin-top: 1mm; }
+ul.toc.dense li.toc-ch { font-size: 9pt; margin-top: 1.7mm; }
+ul.toc.dense li.toc-sub { font-size: 7.8pt; margin-top: 0; line-height: 1.24; }
+
+/* ===================== Chapters ===================== */
+section.chapter { page: chapter; break-before: page; }
+section.chapter.flow { break-before: auto; margin-top: 11mm; }
+section.chapter.flow .chapter-head { break-inside: avoid; break-after: avoid; margin-bottom: 5mm; }
+section.chapter.flow .chapter-bignum { display: none; }
+section.chapter.flow .chapter-head + p { break-after: avoid; }
+.chapter-head { position: relative; margin-bottom: 7mm; padding-top: 4mm; }
+.chapter-bignum {
+  position: absolute; right: 0; top: -6mm;
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 800; font-size: 64pt; color: #eceefa;
+  line-height: 1;
+}
+.chapter-label { position: relative; margin-top: 4mm; }
+h1.chapter-title {
+  position: relative;
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 800; font-size: 22pt; line-height: 1.15;
+  color: var(--navy); margin: 2mm 0 4mm; letter-spacing: -0.01em;
+  string-set: chapter attr(data-running);
+  max-width: 150mm;
+}
+.chapter-rule { height: 1.2mm; background: var(--rule); position: relative; margin-bottom: 2mm; }
+.chapter-rule span { position: absolute; left: 0; top: 0; height: 1.2mm; width: 28mm; background: var(--indigo); }
+.chapter-head + p { font-size: 11pt; }
+
+h2 {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 700; font-size: 13.2pt; color: var(--indigo);
+  margin: 7mm 0 2.4mm; line-height: 1.25;
+  break-after: avoid; page-break-after: avoid;
+  padding-bottom: 1mm; border-bottom: 0.6pt solid var(--rule);
+}
+h3 {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 700; font-size: 11pt; color: var(--navy);
+  margin: 5mm 0 2mm; break-after: avoid;
+}
+h4 {
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 600; font-size: 9.6pt; color: var(--muted);
+  margin: 4mm 0 1.5mm; break-after: avoid; text-transform: uppercase; letter-spacing: 0.05em;
+}
+h2 code, h3 code, h1 code { font-size: 0.85em; }
+
+ul, ol { margin: 0 0 0.7em; padding-left: 6mm; }
+li { margin-bottom: 0.25em; }
+li > p { margin-bottom: 0.3em; }
+ul li::marker { color: var(--indigo-2); }
+ol li::marker { color: var(--indigo); font-family: "Inter", "Symbols", sans-serif; font-weight: 600; font-size: 0.9em; }
+
+/* inline code */
+code {
+  font-family: "DejaVu Sans Mono", "Symbols", monospace; font-size: 0.8em;
+  background: #eef0f7; color: #2a2f6a; padding: 0.1em 0.3em; border-radius: 2pt;
+  overflow-wrap: anywhere;
+}
+
+/* ===================== Code blocks ===================== */
+.codeblock {
+  margin: 2.5mm 0 3.5mm; position: relative;
+}
+.codeblock.short { break-inside: avoid; page-break-inside: avoid; }
+p.keep-next { break-after: avoid; page-break-after: avoid; }
+.code-lang {
+  font-family: "Inter", "Symbols", sans-serif; font-size: 6.4pt; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #fff; background: var(--indigo);
+  display: table; padding: 0.6mm 2.2mm; border-radius: 2pt 2pt 0 0;
+  margin-left: 0;
+  break-after: avoid; page-break-after: avoid;
+}
+pre.hl {
+  margin: 0; background: var(--code-bg);
+  border-left: 2.4pt solid var(--indigo-2);
+  border-top: 0.4pt solid #e3e6f0; border-right: 0.4pt solid #e3e6f0; border-bottom: 0.4pt solid #e3e6f0;
+  padding: 2.6mm 3mm 2.6mm 3.2mm;
+  font-family: "DejaVu Sans Mono", "Symbols", monospace; font-size: 7.8pt; line-height: 1.38;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  orphans: 5; widows: 4;
+  color: #24292f;
+}
+pre.hl code { background: none; padding: 0; font-size: 1em; color: inherit; border-radius: 0; }
+.codeblock.diagram pre.hl {
+  background: #fbfbfe; border-left-color: var(--accent);
+  white-space: pre; font-size: 7.6pt;
+}
+/* pygments override: keep light background */
+.hl { background: var(--code-bg) !important; }
+
+/* ===================== Tables ===================== */
+table {
+  width: 100%; border-collapse: collapse; margin: 2.5mm 0 4mm;
+  font-family: "Inter", "Symbols", sans-serif; font-size: 7.9pt; line-height: 1.35;
+  table-layout: auto;
+}
+thead { display: table-header-group; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+th {
+  background: var(--indigo); color: #fff; font-weight: 700; text-align: left;
+  padding: 1.6mm 2mm; border: 0.4pt solid var(--indigo);
+  font-size: 7.8pt;
+}
+td {
+  padding: 1.4mm 2mm; border-bottom: 0.4pt solid #e1e4ef; vertical-align: top;
+  overflow-wrap: anywhere; word-break: normal; hyphens: auto;
+}
+th, td { overflow-wrap: break-word; }
+tbody tr:nth-child(even) td { background: #f4f5fb; }
+td strong { color: var(--navy); }
+td code { font-size: 0.86em; }
+table.level-table td:first-child {
+  width: 9mm; text-align: center; font-weight: 800; color: var(--indigo);
+}
+
+/* ===================== Badges ===================== */
+.badge {
+  display: inline-block;
+  font-family: "Inter", "Symbols", sans-serif; font-size: 6.3pt; font-weight: 700; font-style: normal;
+  letter-spacing: 0.03em; line-height: 1.25;
+  padding: 0.25mm 1.6mm 0.35mm; border-radius: 6pt;
+  vertical-align: 0.12em; white-space: nowrap;
+  text-indent: 0;
+}
+.badge-ok  { background: #e4f5ea; color: #1b7a43; border: 0.5pt solid #a5d8b8; }
+.badge-ref { background: #e3edfc; color: #1a56a8; border: 0.5pt solid #9fc0ee; }
+.badge-cg  { background: #eceef2; color: #4f5566; border: 0.5pt solid #c8ccd6; }
+.badge-cgx { background: #eceef2; color: #4f5566; border: 0.5pt solid #c8ccd6; white-space: normal; }
+.badge-nv  { background: #fde9e4; color: #b4361a; border: 0.5pt solid #f2ad9c; }
+.badge-syn { background: #efe8fb; color: #6a3fb5; border: 0.5pt solid #c9b4ee; }
+th .badge { vertical-align: 0.05em; }
+
+/* ===================== Citations ===================== */
+sup.cite {
+  font-family: "Inter", "Symbols", sans-serif; font-size: 6pt; font-weight: 600; line-height: 0;
+  vertical-align: 0.6em; margin-left: 0.4pt;
+}
+sup.cite a.cite-num { color: var(--indigo-2); }
+sup.cite .cite-sep { color: #9aa0b5; }
+
+/* ===================== Callouts ===================== */
+.callout {
+  margin: 6mm 0 4mm; padding: 3mm 4mm 2mm; border-radius: 3pt;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  position: relative;
+}
+.callout h2 { margin-top: 1mm; border-bottom: none; font-size: 12pt; padding-bottom: 0; }
+.callout-tag {
+  font-family: "Inter", "Symbols", sans-serif; font-size: 6.6pt; font-weight: 800; letter-spacing: 0.16em;
+  text-transform: uppercase; margin-bottom: 0.5mm;
+}
+.callout table { margin-bottom: 2mm; }
+.callout-checklist { background: var(--green-bg); border: 0.6pt solid #b9e0c6; border-left: 3pt solid var(--green); }
+.callout-checklist .callout-tag, .callout-checklist h2 { color: var(--green); }
+.callout-checklist th { background: var(--green); border-color: var(--green); }
+.callout-checklist tbody tr:nth-child(even) td { background: #e2f2e8; }
+.callout-checklist tbody tr:nth-child(odd) td { background: #fbfefc; }
+.callout-checklist table.level-table td:first-child { color: var(--green); }
+
+.callout-interview { background: var(--amber-bg); border: 0.6pt solid #f3d49a; border-left: 3pt solid #e08e0b; }
+.callout-interview .callout-tag, .callout-interview h2 { color: var(--amber); }
+.callout-interview th { background: #d98a0c; border-color: #d98a0c; }
+.callout-interview tbody tr:nth-child(even) td { background: #fdefd3; }
+.callout-interview tbody tr:nth-child(odd) td { background: #fffcf5; }
+
+p.note {
+  background: var(--blue-bg); border: 0.6pt solid #bcd3f1; border-left: 3pt solid var(--blue);
+  padding: 2.4mm 3.5mm; border-radius: 3pt; text-align: left;
+  box-decoration-break: clone;
+}
+blockquote {
+  margin: 2.5mm 0 3.5mm; padding: 2.4mm 3.5mm 0.6mm; border-radius: 3pt;
+  background: var(--blue-bg); border: 0.6pt solid #bcd3f1; border-left: 3pt solid var(--blue);
+  box-decoration-break: clone;
+}
+blockquote p { text-align: left; }
+blockquote > p:first-child > strong:first-child { color: var(--blue); font-family: "Inter", "Symbols", sans-serif; font-size: 0.88em; }
+p.note > strong:first-child { color: var(--blue); font-family: "Inter", "Symbols", sans-serif; font-size: 0.88em; }
+
+/* ===================== Appendix ===================== */
+.appendix-intro { font-size: 9.5pt; color: var(--muted); }
+ol.sources { list-style: none; padding: 0; margin: 3mm 0 0; font-size: 8pt; line-height: 1.32; columns: 2; column-gap: 7mm; }
+ol.sources li {
+  position: relative; padding-left: 8mm; margin-bottom: 1.5mm; break-inside: avoid;
+}
+.src-num {
+  position: absolute; left: 0; top: 0; width: 6mm; text-align: right;
+  font-family: "Inter", "Symbols", sans-serif; font-weight: 700; color: var(--indigo-2); font-size: 7.6pt;
+}
+.src-title { font-weight: 700; color: var(--navy); }
+.src-where { font-family: "Inter", "Symbols", sans-serif; font-size: 6.8pt; color: var(--muted); }
+a.src-url {
+  font-family: "DejaVu Sans Mono", "Symbols", monospace; font-size: 6.9pt; color: var(--indigo);
+  overflow-wrap: anywhere; word-break: break-all;
+}
+
+th a, th a.ext { color: #fff; border-bottom-color: rgba(255,255,255,0.6); }
+th sup.cite a.cite-num { color: #ffe3a8; }
+.refgroup a.ext { font-style: italic; }
+.cover-subtitle, .cover-title, .cover-kicker { hyphens: none; }
+h1, h2, h3, th { hyphens: none; }
+
+.callout.compact { break-inside: avoid; page-break-inside: avoid; }
+.callout-tag { break-after: avoid; page-break-after: avoid; }
